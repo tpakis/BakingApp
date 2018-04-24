@@ -19,5 +19,6 @@ public class MainActivityViewModel extends ViewModel {
     public MainActivityViewModel() {
         super();
         BakingApplication.getMyApplication().getMainActivityViewModelComponent().inject(this);
+        mRepository.getRecipesFromWeb();
     }
 }

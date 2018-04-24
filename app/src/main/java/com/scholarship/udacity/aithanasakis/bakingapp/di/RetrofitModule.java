@@ -23,7 +23,7 @@ public class RetrofitModule {
 
     @Provides
     @Singleton
-    public RecipeApi getWaterMeterService(Retrofit getClient){
+    public RecipeApi getRecipesService(Retrofit getClient){
         return getClient.create(RecipeApi.class);
     }
 
