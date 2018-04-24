@@ -4,13 +4,19 @@ package com.scholarship.udacity.aithanasakis.bakingapp.model;
  * Created by 3piCerberus on 24/04/2018.
  */
 
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+import android.arch.persistence.room.TypeConverters;
+import com.scholarship.udacity.aithanasakis.bakingapp.TypeConverters.IngredientConverter;
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
+import com.scholarship.udacity.aithanasakis.bakingapp.TypeConverters.StepConverter;
 
+@Entity
 public class Recipe {
 
-    @SerializedName("id")
+    @PrimaryKey
     @Expose
     private Integer id;
     @SerializedName("name")
@@ -18,9 +24,11 @@ public class Recipe {
     private String name;
     @SerializedName("ingredients")
     @Expose
+    @TypeConverters(IngredientConverter.class)
     private List<Ingredient> ingredients = null;
     @SerializedName("steps")
     @Expose
+    @TypeConverters(StepConverter.class)
     private List<Step> steps = null;
     @SerializedName("servings")
     @Expose

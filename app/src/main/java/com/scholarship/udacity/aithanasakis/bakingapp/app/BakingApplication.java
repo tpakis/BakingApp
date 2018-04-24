@@ -5,6 +5,11 @@ import android.content.Context;
 
 import com.facebook.stetho.Stetho;
 import com.scholarship.udacity.aithanasakis.bakingapp.BuildConfig;
+import com.scholarship.udacity.aithanasakis.bakingapp.di.AppComponent;
+import com.scholarship.udacity.aithanasakis.bakingapp.di.AppModule;
+import com.scholarship.udacity.aithanasakis.bakingapp.di.DaggerAppComponent;
+import com.scholarship.udacity.aithanasakis.bakingapp.di.RetrofitModule;
+import com.scholarship.udacity.aithanasakis.bakingapp.di.RoomDbModule;
 
 import timber.log.Timber;
 
@@ -14,6 +19,7 @@ import timber.log.Timber;
 
 public class BakingApplication extends Application {
 
+    private AppComponent mainActivityViewModelComponent;
     private static Context context;
 
 
@@ -26,13 +32,28 @@ public class BakingApplication extends Application {
         BakingApplication.context = getApplicationContext();
         if (BuildConfig.DEBUG){
             Timber.plant(new Timber.DebugTree());
-           // initDaggerComponent();
             initializeStetho();
-
         }
+        initDagger();
     }
     public void  initializeStetho() {
         Stetho.initializeWithDefaults(this);
+    }
+
+    private void initDagger(){
+
+        mainActivityViewModelComponent = DaggerAppComponent.builder()
+                .retrofitModule(new RetrofitModule())
+                .appModule(new AppModule(this))
+                .roomDbModule(new RoomDbModule(this))
+                .build();
+    }
+    public AppComponent getMainActivityViewModelComponent() {
+        return mainActivityViewModelComponent;
+    }
+
+    public static BakingApplication getMyApplication() {
+        return myApplication;
     }
 
     public static Context getAppContext() {
