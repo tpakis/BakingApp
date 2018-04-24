@@ -8,6 +8,7 @@ import com.scholarship.udacity.aithanasakis.bakingapp.BuildConfig;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.AppComponent;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.AppModule;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.DaggerAppComponent;
+import com.scholarship.udacity.aithanasakis.bakingapp.di.OkHttpClientModule;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.RetrofitModule;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.RoomDbModule;
 

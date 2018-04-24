@@ -1,5 +1,9 @@
 package com.scholarship.udacity.aithanasakis.bakingapp.repository;
 
+import android.annotation.SuppressLint;
+import android.os.AsyncTask;
+import android.util.Log;
+
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
 import com.scholarship.udacity.aithanasakis.bakingapp.network.RecipeApi;
 import com.scholarship.udacity.aithanasakis.bakingapp.room.RecipesDAO;
@@ -31,6 +35,8 @@ public class RecipesRepository {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
+                    List<Recipe> tmp = response.body();
+                    addRecipesToDB(tmp);
                    // measurementsListObservable.setValue(response.body());
                     //   items.addAll(response.body().getResults());
                     //   setLiveData(items);
@@ -53,8 +59,26 @@ public class RecipesRepository {
 
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
+                Log.d("asd","asd");
 
             }
         });
+    }
+    public void addRecipesToDB(List<Recipe> items) {
+        new AsyncTask<List<Recipe>, Void, Void>() {
+            @Override
+            protected Void doInBackground(List<Recipe>... params) {
+                for (Recipe item : params[0]) {
+                    recipesDAO.insertEntry(item);
+                }
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void a) {
+
+                //loadEntries();
+            }
+        }.execute(items);
     }
 }
