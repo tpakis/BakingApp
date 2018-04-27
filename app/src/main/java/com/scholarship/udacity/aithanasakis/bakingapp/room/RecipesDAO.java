@@ -21,13 +21,14 @@ public interface RecipesDAO {
     // Removes an entry from the database
     @Delete
     void delete(Recipe entry);
+    // Gets all entries in the database
+    @Query("SELECT * FROM Recipe")
+    List<Recipe> getAllEntries();
 
     /*@Query("delete from RecipeEntries where nasaId = :id")
     void deleteById(String id);
 
-    // Gets all entries in the database
-    @Query("SELECT * FROM RecipeEntries")
-    List<Recipe> getAllEntries();
+
 
     // Gets all entries in the database
     @Query("SELECT * FROM RecipeEntries where description LIKE :queryString")

@@ -5,4 +5,5 @@ package com.scholarship.udacity.aithanasakis.bakingapp.app;
  */
 
 public class Constants {
+
 }
