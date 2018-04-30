@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.OnConflictStrategy;
 import android.arch.persistence.room.Query;
+import android.arch.persistence.room.Update;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
 
@@ -15,8 +16,11 @@ import java.util.List;
  */
 @Dao
 public interface RecipesDAO {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insertEntry(Recipe entry);
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    long insertEntry(Recipe entry);
+
+    @Update(onConflict = OnConflictStrategy.IGNORE)
+    int update(Recipe entry);
 
     // Removes an entry from the database
     @Delete

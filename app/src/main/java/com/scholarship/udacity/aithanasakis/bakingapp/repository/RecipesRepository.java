@@ -5,6 +5,7 @@ import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Switch;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Resource;
@@ -12,7 +13,9 @@ import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Status;
 import com.scholarship.udacity.aithanasakis.bakingapp.network.RecipeApi;
 import com.scholarship.udacity.aithanasakis.bakingapp.room.RecipesDAO;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
@@ -21,6 +24,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
+
+
 
 /**
  * Created by 3piCerberus on 24/04/2018.
@@ -40,6 +45,9 @@ public class RecipesRepository {
 
     public void fetchData(){
         List<Recipe> loadingList = null;
+        if (recipesListObservable.getValue()!=null){
+            loadingList=recipesListObservable.getValue().data;
+        }
         recipesListObservable.setValue(Resource.loading(loadingList));
         loadAllRecipesFromDB();
         getRecipesFromWeb();
@@ -50,19 +58,16 @@ public class RecipesRepository {
     }
 
     private void getRecipesFromWeb(){
+        Timber.d("getRecipesFromWeb");
         recipeApi.getRecipesFromWeb().enqueue(new Callback<List<Recipe>>() {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
+                    setRecipesListObservableStatus(Status.SUCCESS,null);
                     addRecipesToDB(response.body());
-
-                   // measurementsListObservable.setValue(response.body());
-                    //   items.addAll(response.body().getResults());
-                    //   setLiveData(items);
-                    // addAllToDB(itemsData);
                 } else {
                     // error case
-                    setRecipesListObservable(null,false,String.valueOf(response.code()));
+                    setRecipesListObservableStatus(Status.ERROR,String.valueOf(response.code()));
                     switch (response.code()) {
                         case 404:
                             Timber.d("not found");
@@ -76,32 +81,46 @@ public class RecipesRepository {
                     }
                 }
             }
-
             @Override
             public void onFailure(Call<List<Recipe>> call, Throwable t) {
                 Log.d("asd","asd");
-               setRecipesListObservable(null,false, t.getMessage());
+               setRecipesListObservableStatus(Status.ERROR, t.getMessage());
             }
         });
     }
+
     private void addRecipesToDB(List<Recipe> items) {
-        new AsyncTask<List<Recipe>, Void, Void>() {
+        Timber.d("addRecipesToDB");
+        new AsyncTask<List<Recipe>, Void, Boolean>() {
             @Override
-            protected Void doInBackground(List<Recipe>... params) {
+            protected Boolean doInBackground(List<Recipe>... params) {
+                boolean needsUpdate = false;
                 for (Recipe item : params[0]) {
-                    recipesDAO.insertEntry(item);
+                    //upsert implementation for future use
+                    Long inserted = recipesDAO.insertEntry(item); //-1 if not inserted
+                    if (inserted == -1){
+                        int updated = recipesDAO.update(item);
+                        if (updated > 0){
+                            needsUpdate = true;
+                        }
+                    }else{
+                        needsUpdate = true;
+                    }
+
                 }
-                return null;
+                return needsUpdate;
             }
 
             @Override
-            protected void onPostExecute(Void a) {
-                loadAllRecipesFromDB();
-                //loadEntries();
+            protected void onPostExecute(Boolean needUpdate) {
+                if (needUpdate) {
+                    loadAllRecipesFromDB();
+                }
             }
         }.execute(items);
     }
     private void loadAllRecipesFromDB() {
+        Timber.d("loadAllRecipesFromDB");
         new AsyncTask<Void, Void, List<Recipe>>() {
             @Override
             protected List<Recipe> doInBackground(Void...a) {
@@ -110,29 +129,62 @@ public class RecipesRepository {
 
             @Override
             protected void onPostExecute(List<Recipe> results) {
-                setRecipesListObservable(results, true, null );
-                //loadEntries();
+               //check if there are data in the db
+                if ((results != null)&&results.size()>0) {
+                    setRecipesListObservableData(results, null);
+                }
             }
         }.execute();
     }
 
-
-    private boolean compareListWithLiveDataValue(List<Recipe> mRecipesList){
-        boolean retValue = false;
-        if (recipesListObservable.getValue() != null && recipesListObservable.getValue().data != null){
-            retValue = mRecipesList.equals(recipesListObservable.getValue().data);
+    /**
+     * This method changes the observable's LiveData data without changing the status
+     * @param mRecipesList the data that need to be updated
+     * @param message optional message for error
+     */
+    private void setRecipesListObservableData(List<Recipe> mRecipesList, String message) {
+        Timber.d("setRecipesListObservableData");
+        Status loadingStatus = Status.LOADING;
+        if (recipesListObservable.getValue()!=null){
+            loadingStatus=recipesListObservable.getValue().status;
         }
-        return retValue;
-    }
-
-    private void setRecipesListObservable(List<Recipe> mRecipesList, boolean success, String message) {
-        if (success) {
-            if (!compareListWithLiveDataValue(mRecipesList)) {
+        switch (loadingStatus) {
+            case LOADING:
+                recipesListObservable.setValue(Resource.loading(mRecipesList));
+                break;
+            case ERROR:
+                recipesListObservable.setValue(Resource.error(message,mRecipesList));
+                break;
+            case SUCCESS:
                 recipesListObservable.setValue(Resource.success(mRecipesList));
-            }
-        }else{
-            //mRecipesList coould be null
-            recipesListObservable.setValue(Resource.error(message, mRecipesList));
+                break;
         }
     }
+
+    /**
+     * This method changes the observable's LiveData status without changing the data
+     * @param status The new status of LiveData
+     * @param message optional message for error
+     */
+    private void setRecipesListObservableStatus(Status status, String message) {
+        Timber.d("setRecipesListObservableStatus");
+        List<Recipe> loadingList = null;
+        if (recipesListObservable.getValue()!=null){
+            loadingList=recipesListObservable.getValue().data;
+        }
+        switch (status) {
+            case ERROR:
+                recipesListObservable.setValue(Resource.error(message, loadingList));
+                break;
+            case LOADING:
+                recipesListObservable.setValue(Resource.loading(loadingList));
+                break;
+            case SUCCESS:
+                if (loadingList!=null) {
+                    recipesListObservable.setValue(Resource.success(loadingList));
+                }
+                break;
+        }
+
+        }
 }

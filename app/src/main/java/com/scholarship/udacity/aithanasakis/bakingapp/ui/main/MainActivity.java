@@ -36,5 +36,6 @@ public class MainActivity extends AppCompatActivity {
               Timber.d(recipes.status.toString());
            }
        });
+        viewModel.getData();
     }
 }

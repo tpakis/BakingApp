@@ -30,7 +30,6 @@ public class MainActivityViewModel extends ViewModel {
     public MainActivityViewModel() {
         super();
         BakingApplication.getMyApplication().getMainActivityViewModelComponent().inject(this);
-        mRepository.fetchData();
 
         //subscribe to Livedata of the repository and pass it along to the view (activity - fragment etc)
         recipesListObservable.addSource(mRepository.getRecipesListObservable(), new Observer<Resource<List<Recipe>>>() {
@@ -40,7 +39,10 @@ public class MainActivityViewModel extends ViewModel {
             }
         });
 
+    }
 
+    public void getData(){
+        mRepository.fetchData();
     }
 
     public LiveData<Resource<List<Recipe>>> getRecipesListObservable() {
