@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 /**
  * Created by 3piCerberus on 24/04/2018.
  */
-//a generic class that describes a data with a status
+//a generic wrapper class that describes a data with a status
 public class Resource<T> {
     @NonNull
     public final Status status;
@@ -18,6 +18,7 @@ public class Resource<T> {
         this.data = data;
         this.message = message;
     }
+
 
     public static <T> Resource<T> success(@NonNull T data) {
         return new Resource<>(Status.SUCCESS, data, null);
