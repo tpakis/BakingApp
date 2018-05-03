@@ -61,7 +61,6 @@ public class RecipesRepository {
                 if (response.isSuccessful()) {
                     pendingStatus = Status.SUCCESS;
                     addRecipesToDB(response.body());
-
                 } else {
                     // error case
                     setRecipesListObservableStatus(Status.ERROR,String.valueOf(response.code()));
@@ -142,7 +141,7 @@ public class RecipesRepository {
     private void setRecipesListObservableData(List<Recipe> mRecipesList, String message) {
         Timber.d("setRecipesListObservableData");
         Status loadingStatus = pendingStatus;
-        if (recipesListObservable.getValue()!= null && recipesListObservable.getValue().data != null){
+        if (recipesListObservable.getValue()!= null){
             loadingStatus=recipesListObservable.getValue().status;
         }
         switch (loadingStatus) {
@@ -165,7 +164,10 @@ public class RecipesRepository {
      */
     private void setRecipesListObservableStatus(Status status, String message) {
         Timber.d("setRecipesListObservableStatus"+message);
-
+        List<Recipe> loadingList = null;
+        if (recipesListObservable.getValue()!=null){
+            loadingList=recipesListObservable.getValue().data;
+        }
         switch (status) {
             case ERROR:
                 recipesListObservable.setValue(Resource.error(message, loadingList));
@@ -174,10 +176,8 @@ public class RecipesRepository {
                 recipesListObservable.setValue(Resource.loading(loadingList));
                 break;
             case SUCCESS:
-                    recipesListObservable.setValue(Resource.success(loadingList));
-                }else{
-                    pendingStatus=Status.SUCCESS;
-                }
+                //extra carefull not to be null, could implement a check but not needed now
+                recipesListObservable.setValue(Resource.success(loadingList));
                 break;
         }
         Timber.d("ttttttttttt"+status.toString());
