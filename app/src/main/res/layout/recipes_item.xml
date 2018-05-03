@@ -1,0 +1,55 @@
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+   >
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_card_title_block_small_height"
+        android:paddingLeft="@dimen/material_card_title_block_padding_horizontal"
+        android:paddingRight="@dimen/material_card_title_block_padding_horizontal"
+        android:paddingBottom="@dimen/material_card_title_block_small_padding_vertical"
+        android:paddingTop="@dimen/material_card_title_block_small_padding_vertical">
+
+        <android.support.v7.widget.AppCompatImageView
+            android:id="@+id/imageview_recipe"
+            android:layout_width="@dimen/material_list_avatar_size"
+            android:layout_height="0dp"
+            android:layout_marginStart="@dimen/material_list_avatar_margin_start"
+            android:layout_marginLeft="@dimen/material_list_avatar_margin_start"
+            android:contentDescription="@string/main_rv_image_content_description"
+            app:layout_constraintBottom_toBottomOf="@+id/textview_recipe_name"
+            app:layout_constraintDimensionRatio="h,1:1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/textview_recipe_name"
+            app:srcCompat="@drawable/ic_restaurant_menu_black_24dp" />
+
+        <TextView
+            android:id="@+id/textview_recipe_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/material_list_text_second_position_edge_margin_start"
+            android:layout_marginLeft="@dimen/material_list_text_second_position_edge_margin_start"
+            style="@style/MaterialTypography.Regular.Title"
+            android:textSize="@dimen/material_card_title_block_small_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="Cheese Cake" />
+
+        <TextView
+            android:id="@+id/textview_servings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            style="@style/MaterialTypography.Regular.Subheading"
+            android:textSize="@dimen/material_card_title_block_subtitle_text_size"
+            app:layout_constraintEnd_toEndOf="@+id/textview_recipe_name"
+            app:layout_constraintStart_toStartOf="@+id/textview_recipe_name"
+            app:layout_constraintTop_toBottomOf="@+id/textview_recipe_name"
+            tools:text="Servings: 2" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

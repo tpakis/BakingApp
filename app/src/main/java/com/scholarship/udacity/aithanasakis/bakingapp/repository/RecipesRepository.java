@@ -92,9 +92,11 @@ public class RecipesRepository {
             protected Boolean doInBackground(List<Recipe>... params) {
                 boolean needsUpdate = false;
                 for (Recipe item : params[0]) {
-                    //upsert implementation for future use
+                    //start to insert item in db
                     Long inserted = recipesDAO.insertEntry(item); //-1 if not inserted
                     if (inserted == -1){
+                        //check if the item in db is exactly the same with the item that we wanted
+                        //to insert. If not then update item
                         if (!item.equals(recipesDAO.getSpecifigEntryById(item.getId()))){
                             int updated = recipesDAO.update(item);
                             needsUpdate = true;
