@@ -5,5 +5,7 @@ package com.scholarship.udacity.aithanasakis.bakingapp.app;
  */
 
 public class Constants {
-
+    public static final String SELECTEDRECIPE = "SELECTEDRECIPE";
+    public static final String RECIPESTEPSFRAGMENTTAG = "SELECTEDRECIPE";
+    public static final String STEPDETAILSFRAGMENTTAG = "SELECTEDRECIPE";
 }

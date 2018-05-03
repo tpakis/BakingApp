@@ -2,6 +2,7 @@ package com.scholarship.udacity.aithanasakis.bakingapp.ui.main;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
 import android.icu.text.TimeZoneNames;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -16,8 +17,11 @@ import android.widget.LinearLayout;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.R;
 import com.scholarship.udacity.aithanasakis.bakingapp.adapter.RecipesMainAdapter;
+import com.scholarship.udacity.aithanasakis.bakingapp.app.Constants;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Resource;
+import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Status;
+import com.scholarship.udacity.aithanasakis.bakingapp.ui.details.RecipeDetailsActivity;
 import com.scholarship.udacity.aithanasakis.bakingapp.viewmodel.MainActivityViewModel;
 
 import java.util.List;
@@ -62,10 +66,12 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
             @Override
             public void onChanged(@Nullable Resource<List<Recipe>> recipes) {
                 Timber.d("ttttttttttt" + recipes.status.toString());
+                if (recipes.status!= Status.LOADING){
+                    pullToRefresh.setRefreshing(false);
+                }
                 if (recipes.data != null&&!compareLists(mRecipesMainAdapter.getRecipesListShown(),recipes.data)) {
                     mRecipesMainAdapter.setRecipesListToShow(recipes.data);
                     todoListEmptyView.setVisibility(View.GONE);
-                    pullToRefresh.setRefreshing(false);
                 }
             }
         });
@@ -103,7 +109,9 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
 
     @Override
     public void onClick(Recipe selectedRecipeItem) {
-        //
+        Intent intent = new Intent(this, RecipeDetailsActivity.class);
+        intent.putExtra(Constants.SELECTEDRECIPE, selectedRecipeItem);
+        startActivity(intent);
     }
 
 }

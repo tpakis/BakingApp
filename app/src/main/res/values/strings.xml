@@ -6,4 +6,6 @@
     <string name="servings_count">Servings: %1$d</string>
     <!-- Content Descriptions-->
     <string name="main_rv_image_content_description">Recipe Icon</string>
+    <!--Activity Details-->
+    <string name="ingredients_label">Ingredients</string>
 </resources>
