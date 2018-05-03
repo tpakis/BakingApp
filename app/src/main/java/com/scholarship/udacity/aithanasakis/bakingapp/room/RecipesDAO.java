@@ -16,8 +16,12 @@ import java.util.List;
  */
 @Dao
 public interface RecipesDAO {
+    //it will return -1 if the item was already in db and not inserted
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     long insertEntry(Recipe entry);
+
+    @Query("SELECT * FROM Recipe WHERE id = :id")
+    Recipe getSpecifigEntryById(int id);
 
     @Update(onConflict = OnConflictStrategy.IGNORE)
     int update(Recipe entry);

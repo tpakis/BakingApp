@@ -35,7 +35,7 @@ public class RecipesRepository {
     private RecipesDAO recipesDAO;
     private RecipeApi recipeApi;
     private MutableLiveData<Resource<List<Recipe>>> recipesListObservable = new MutableLiveData<Resource<List<Recipe>>>();
-
+    private Status pendingStatus;
     @Inject
     public RecipesRepository(RecipesDAO recipesDAO, RecipeApi recipeApi){
         this.recipesDAO=recipesDAO;
@@ -44,11 +44,7 @@ public class RecipesRepository {
     }
 
     public void fetchData(){
-        List<Recipe> loadingList = null;
-        if (recipesListObservable.getValue()!=null){
-            loadingList=recipesListObservable.getValue().data;
-        }
-        recipesListObservable.setValue(Resource.loading(loadingList));
+        pendingStatus = Status.LOADING;
         loadAllRecipesFromDB();
         getRecipesFromWeb();
     }
@@ -63,7 +59,7 @@ public class RecipesRepository {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
-                    setRecipesListObservableStatus(Status.SUCCESS,null);
+                    pendingStatus = Status.SUCCESS;
                     addRecipesToDB(response.body());
                 } else {
                     // error case
@@ -99,14 +95,13 @@ public class RecipesRepository {
                     //upsert implementation for future use
                     Long inserted = recipesDAO.insertEntry(item); //-1 if not inserted
                     if (inserted == -1){
-                        int updated = recipesDAO.update(item);
-                        if (updated > 0){
+                        if (!item.equals(recipesDAO.getSpecifigEntryById(item.getId()))){
+                            int updated = recipesDAO.update(item);
                             needsUpdate = true;
                         }
                     }else{
                         needsUpdate = true;
                     }
-
                 }
                 return needsUpdate;
             }
@@ -115,7 +110,10 @@ public class RecipesRepository {
             protected void onPostExecute(Boolean needUpdate) {
                 if (needUpdate) {
                     loadAllRecipesFromDB();
+                } else{
+                    setRecipesListObservableStatus(pendingStatus,null);
                 }
+
             }
         }.execute(items);
     }
@@ -129,10 +127,8 @@ public class RecipesRepository {
 
             @Override
             protected void onPostExecute(List<Recipe> results) {
-               //check if there are data in the db
-                if ((results != null)&&results.size()>0) {
+               //if no data is stored in db then the pendingStatus will be loading
                     setRecipesListObservableData(results, null);
-                }
             }
         }.execute();
     }
@@ -144,8 +140,8 @@ public class RecipesRepository {
      */
     private void setRecipesListObservableData(List<Recipe> mRecipesList, String message) {
         Timber.d("setRecipesListObservableData");
-        Status loadingStatus = Status.LOADING;
-        if (recipesListObservable.getValue()!=null){
+        Status loadingStatus = pendingStatus;
+        if (recipesListObservable.getValue()!= null){
             loadingStatus=recipesListObservable.getValue().status;
         }
         switch (loadingStatus) {
@@ -167,7 +163,7 @@ public class RecipesRepository {
      * @param message optional message for error
      */
     private void setRecipesListObservableStatus(Status status, String message) {
-        Timber.d("setRecipesListObservableStatus");
+        Timber.d("setRecipesListObservableStatus"+message);
         List<Recipe> loadingList = null;
         if (recipesListObservable.getValue()!=null){
             loadingList=recipesListObservable.getValue().data;
@@ -180,11 +176,10 @@ public class RecipesRepository {
                 recipesListObservable.setValue(Resource.loading(loadingList));
                 break;
             case SUCCESS:
-                if (loadingList!=null) {
-                    recipesListObservable.setValue(Resource.success(loadingList));
-                }
+                //extra carefull not to be null, could implement a check but not needed now
+                recipesListObservable.setValue(Resource.success(loadingList));
                 break;
         }
-
+        Timber.d("ttttttttttt"+status.toString());
         }
 }
