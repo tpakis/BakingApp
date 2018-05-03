@@ -45,7 +45,6 @@ public class RecipesRepository {
 
     public void fetchData(){
         pendingStatus = Status.LOADING;
-        setRecipesListObservableStatus(pendingStatus,null);
         loadAllRecipesFromDB();
         getRecipesFromWeb();
     }
@@ -60,8 +59,9 @@ public class RecipesRepository {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
+                    pendingStatus = Status.SUCCESS;
                     addRecipesToDB(response.body());
-                    setRecipesListObservableStatus(Status.SUCCESS,null);
+
                 } else {
                     // error case
                     setRecipesListObservableStatus(Status.ERROR,String.valueOf(response.code()));
@@ -111,7 +111,10 @@ public class RecipesRepository {
             protected void onPostExecute(Boolean needUpdate) {
                 if (needUpdate) {
                     loadAllRecipesFromDB();
+                } else{
+                    setRecipesListObservableStatus(pendingStatus,null);
                 }
+
             }
         }.execute(items);
     }
@@ -125,10 +128,8 @@ public class RecipesRepository {
 
             @Override
             protected void onPostExecute(List<Recipe> results) {
-               //check if there are data in the db
-                if ((results != null)&&results.size()>0) {
+               //if no data is stored in db then the pendingStatus will be loading
                     setRecipesListObservableData(results, null);
-                }
             }
         }.execute();
     }
@@ -164,10 +165,7 @@ public class RecipesRepository {
      */
     private void setRecipesListObservableStatus(Status status, String message) {
         Timber.d("setRecipesListObservableStatus"+message);
-        List<Recipe> loadingList = null;
-        if (recipesListObservable.getValue()!=null){
-            loadingList=recipesListObservable.getValue().data;
-        }
+
         switch (status) {
             case ERROR:
                 recipesListObservable.setValue(Resource.error(message, loadingList));
@@ -176,7 +174,6 @@ public class RecipesRepository {
                 recipesListObservable.setValue(Resource.loading(loadingList));
                 break;
             case SUCCESS:
-                if (loadingList!=null) {
                     recipesListObservable.setValue(Resource.success(loadingList));
                 }else{
                     pendingStatus=Status.SUCCESS;
