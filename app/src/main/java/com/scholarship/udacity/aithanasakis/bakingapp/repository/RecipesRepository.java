@@ -35,7 +35,7 @@ public class RecipesRepository {
     private RecipesDAO recipesDAO;
     private RecipeApi recipeApi;
     private MutableLiveData<Resource<List<Recipe>>> recipesListObservable = new MutableLiveData<Resource<List<Recipe>>>();
-
+    private Status pendingStatus;
     @Inject
     public RecipesRepository(RecipesDAO recipesDAO, RecipeApi recipeApi){
         this.recipesDAO=recipesDAO;
@@ -44,11 +44,8 @@ public class RecipesRepository {
     }
 
     public void fetchData(){
-        List<Recipe> loadingList = null;
-        if (recipesListObservable.getValue()!=null){
-            loadingList=recipesListObservable.getValue().data;
-        }
-        recipesListObservable.setValue(Resource.loading(loadingList));
+        pendingStatus = Status.LOADING;
+        setRecipesListObservableStatus(pendingStatus,null);
         loadAllRecipesFromDB();
         getRecipesFromWeb();
     }
@@ -63,8 +60,8 @@ public class RecipesRepository {
             @Override
             public void onResponse(Call<List<Recipe>> call, Response<List<Recipe>> response) {
                 if (response.isSuccessful()) {
-                    setRecipesListObservableStatus(Status.SUCCESS,null);
                     addRecipesToDB(response.body());
+                    setRecipesListObservableStatus(Status.SUCCESS,null);
                 } else {
                     // error case
                     setRecipesListObservableStatus(Status.ERROR,String.valueOf(response.code()));
@@ -99,14 +96,13 @@ public class RecipesRepository {
                     //upsert implementation for future use
                     Long inserted = recipesDAO.insertEntry(item); //-1 if not inserted
                     if (inserted == -1){
-                        int updated = recipesDAO.update(item);
-                        if (updated > 0){
+                        if (!item.equals(recipesDAO.getSpecifigEntryById(item.getId()))){
+                            int updated = recipesDAO.update(item);
                             needsUpdate = true;
                         }
                     }else{
                         needsUpdate = true;
                     }
-
                 }
                 return needsUpdate;
             }
@@ -144,8 +140,8 @@ public class RecipesRepository {
      */
     private void setRecipesListObservableData(List<Recipe> mRecipesList, String message) {
         Timber.d("setRecipesListObservableData");
-        Status loadingStatus = Status.LOADING;
-        if (recipesListObservable.getValue()!=null){
+        Status loadingStatus = pendingStatus;
+        if (recipesListObservable.getValue()!= null && recipesListObservable.getValue().data != null){
             loadingStatus=recipesListObservable.getValue().status;
         }
         switch (loadingStatus) {
@@ -167,7 +163,7 @@ public class RecipesRepository {
      * @param message optional message for error
      */
     private void setRecipesListObservableStatus(Status status, String message) {
-        Timber.d("setRecipesListObservableStatus");
+        Timber.d("setRecipesListObservableStatus"+message);
         List<Recipe> loadingList = null;
         if (recipesListObservable.getValue()!=null){
             loadingList=recipesListObservable.getValue().data;
@@ -182,9 +178,11 @@ public class RecipesRepository {
             case SUCCESS:
                 if (loadingList!=null) {
                     recipesListObservable.setValue(Resource.success(loadingList));
+                }else{
+                    pendingStatus=Status.SUCCESS;
                 }
                 break;
         }
-
+        Timber.d("ttttttttttt"+status.toString());
         }
 }

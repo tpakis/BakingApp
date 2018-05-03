@@ -85,4 +85,11 @@ public class Recipe {
         this.image = image;
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return (obj.getClass()==Recipe.class&&this.name.equals(((Recipe) obj).name)
+                && this.servings.equals(((Recipe) obj).servings) && this.image
+                .equals(((Recipe) obj).image));
+    }
+
 }

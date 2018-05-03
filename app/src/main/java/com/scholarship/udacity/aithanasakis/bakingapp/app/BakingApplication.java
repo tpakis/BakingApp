@@ -11,6 +11,7 @@ import com.scholarship.udacity.aithanasakis.bakingapp.di.DaggerAppComponent;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.OkHttpClientModule;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.RetrofitModule;
 import com.scholarship.udacity.aithanasakis.bakingapp.di.RoomDbModule;
+import com.squareup.leakcanary.LeakCanary;
 
 import timber.log.Timber;
 
@@ -29,6 +30,12 @@ public class BakingApplication extends Application {
 
     public void onCreate() {
         super.onCreate();
+        if (LeakCanary.isInAnalyzerProcess(this)) {
+            // This process is dedicated to LeakCanary for heap analysis.
+            // You should not init your app in this process.
+            return;
+        }
+        LeakCanary.install(this);
         myApplication=this;
         BakingApplication.context = getApplicationContext();
         if (BuildConfig.DEBUG){
