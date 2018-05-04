@@ -3,7 +3,6 @@ package com.scholarship.udacity.aithanasakis.bakingapp.ui.main;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
-import android.icu.text.TimeZoneNames;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
@@ -106,6 +105,8 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
         // Fetching data from server
         viewModel.getData();
     }
+
+
 
     @Override
     public void onClick(Recipe selectedRecipeItem) {

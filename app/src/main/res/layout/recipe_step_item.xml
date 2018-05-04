@@ -1,0 +1,51 @@
+<android.support.v7.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    >
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/material_card_title_block_small_height"
+        android:paddingBottom="@dimen/material_card_title_block_small_padding_vertical"
+        android:paddingLeft="@dimen/material_card_title_block_padding_horizontal"
+        android:paddingRight="@dimen/material_card_title_block_padding_horizontal"
+        android:paddingTop="@dimen/material_card_title_block_small_padding_vertical">
+
+        <TextView
+            android:id="@+id/textview_step_number"
+            style="@style/MaterialTypography.Regular.Title"
+            android:layout_width="@dimen/material_list_avatar_size"
+            android:layout_height="@dimen/material_list_avatar_size"
+            android:layout_marginStart="@dimen/material_list_avatar_margin_start"
+            android:layout_marginLeft="@dimen/material_list_avatar_margin_start"
+            android:background="@drawable/circle_around_text"
+            android:gravity="center"
+            android:textSize="@dimen/material_card_title_block_small_text_size"
+            app:layout_constraintEnd_toStartOf="@+id/textview_step_name"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="1" />
+
+        <TextView
+            android:id="@+id/textview_step_name"
+            style="@style/MaterialTypography.Regular.Headline"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/material_card_title_block_subtitle_text_size"
+            android:gravity="center_vertical"
+            android:layout_marginStart="@dimen/material_list_avatar_margin_start"
+            android:layout_marginLeft="@dimen/material_list_avatar_margin_start"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/textview_step_number"
+            app:layout_constraintBottom_toBottomOf="@+id/textview_step_number"
+            app:layout_constraintTop_toTopOf="@+id/textview_step_number"
+            tools:layout_editor_absoluteY="16dp"
+            tools:text="next step" />
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.CardView>

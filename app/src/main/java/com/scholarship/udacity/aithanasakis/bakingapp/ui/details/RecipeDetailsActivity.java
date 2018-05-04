@@ -48,6 +48,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         ButterKnife.bind(this);
         if (bundle != null && bundle.containsKey(Constants.SELECTEDRECIPE)) {
             selectedRecipe = bundle.getParcelable(Constants.SELECTEDRECIPE);
+        }else if (savedInstanceState!=null) {
+            selectedRecipe = savedInstanceState.getParcelable(Constants.RECIPEPARCEL);
         }else{
             Timber.d("no recipe to show error");
             finish();
@@ -77,7 +79,14 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(Constants.RECIPEPARCEL,selectedRecipe);
+    }
     public Recipe getSelectedRecipe() {
         return selectedRecipe;
     }
+
+
 }
