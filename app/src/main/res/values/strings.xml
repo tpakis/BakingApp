@@ -8,4 +8,6 @@
     <string name="main_rv_image_content_description">Recipe Icon</string>
     <!--Activity Details-->
     <string name="ingredients_label">Ingredients</string>
+    <string name="add_to_widget">Add to widget</string>
+
 </resources>

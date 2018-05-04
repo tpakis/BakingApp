@@ -35,7 +35,9 @@ public class RecipesRepository {
     private RecipesDAO recipesDAO;
     private RecipeApi recipeApi;
     private MutableLiveData<Resource<List<Recipe>>> recipesListObservable = new MutableLiveData<Resource<List<Recipe>>>();
+    private MutableLiveData<Recipe> recipeForWidget = new MutableLiveData<Recipe>();
     private Status pendingStatus;
+
     @Inject
     public RecipesRepository(RecipesDAO recipesDAO, RecipeApi recipeApi){
         this.recipesDAO=recipesDAO;

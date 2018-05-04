@@ -23,6 +23,10 @@ public interface RecipesDAO {
     @Query("SELECT * FROM Recipe WHERE id = :id")
     Recipe getSpecifigEntryById(int id);
 
+    @Query("SELECT * FROM Recipe WHERE forWidget = 1")
+    Recipe getEntryForWidget();
+
+
     @Update(onConflict = OnConflictStrategy.IGNORE)
     int update(Recipe entry);
 

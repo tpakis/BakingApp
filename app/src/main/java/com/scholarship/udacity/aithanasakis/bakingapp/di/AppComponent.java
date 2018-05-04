@@ -1,7 +1,9 @@
 package com.scholarship.udacity.aithanasakis.bakingapp.di;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.network.RecipeApi;
+import com.scholarship.udacity.aithanasakis.bakingapp.room.RecipesDAO;
 import com.scholarship.udacity.aithanasakis.bakingapp.viewmodel.MainActivityViewModel;
+import com.scholarship.udacity.aithanasakis.bakingapp.widget.RecipesWidgetRemoteViewsFactory;
 
 import javax.inject.Singleton;
 
@@ -16,4 +18,5 @@ import dagger.Component;
 public interface AppComponent {
     void inject(MainActivityViewModel viewModel);
     RecipeApi getRecipeApi();
+    RecipesDAO getRecipeDAO();
 }

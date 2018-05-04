@@ -41,6 +41,7 @@ public class Recipe implements Parcelable {
     @SerializedName("image")
     @Expose
     private String image;
+    private int forWidget;
 
     public Integer getId() {
         return id;
@@ -90,11 +91,19 @@ public class Recipe implements Parcelable {
         this.image = image;
     }
 
+    public int getForWidget() {
+        return forWidget;
+    }
+
+    public void setForWidget(int forWidget) {
+        this.forWidget = forWidget;
+    }
+
     @Override
     public boolean equals(Object obj) {
         return (obj.getClass()==Recipe.class&&this.name.equals(((Recipe) obj).name)
                 && this.servings.equals(((Recipe) obj).servings) && this.image
-                .equals(((Recipe) obj).image));
+                .equals(((Recipe) obj).image) && this.forWidget==((Recipe) obj).forWidget);
     }
 
 
