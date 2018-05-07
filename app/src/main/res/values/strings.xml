@@ -9,5 +9,5 @@
     <!--Activity Details-->
     <string name="ingredients_label">Ingredients</string>
     <string name="add_to_widget">Add to widget</string>
-
+    <string name="added_to_widget">Added to widget</string>
 </resources>

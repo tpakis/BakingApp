@@ -55,6 +55,29 @@ public class RecipesRepository {
         return recipesListObservable;
     }
 
+    public void setRecipeForWidget(Recipe recipe){
+        Timber.d("setRecipeForWidget");
+        new AsyncTask<Recipe, Void, Void>() {
+            @Override
+            protected Void doInBackground(Recipe... params) {
+
+                    Recipe oldWidgetRecipe = recipesDAO.getEntryForWidget();
+                    if (oldWidgetRecipe !=null){
+                        //set it not for widget
+                        oldWidgetRecipe.setForWidget(0);
+                        recipesDAO.update(oldWidgetRecipe);
+                    }
+                    recipesDAO.update(params[0]);
+                    return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void result) {
+
+            }
+        }.execute(recipe);
+    }
+
     private void getRecipesFromWeb(){
         Timber.d("getRecipesFromWeb");
         recipeApi.getRecipesFromWeb().enqueue(new Callback<List<Recipe>>() {

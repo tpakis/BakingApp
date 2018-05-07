@@ -2,6 +2,7 @@ package com.scholarship.udacity.aithanasakis.bakingapp.di;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.network.RecipeApi;
 import com.scholarship.udacity.aithanasakis.bakingapp.room.RecipesDAO;
+import com.scholarship.udacity.aithanasakis.bakingapp.viewmodel.DetailsActivityViewModel;
 import com.scholarship.udacity.aithanasakis.bakingapp.viewmodel.MainActivityViewModel;
 import com.scholarship.udacity.aithanasakis.bakingapp.widget.RecipesWidgetRemoteViewsFactory;
 
@@ -17,6 +18,7 @@ import dagger.Component;
 @Component(modules = {AppModule.class,RetrofitModule.class,RecipesRepositoryModule.class,RoomDbModule.class})
 public interface AppComponent {
     void inject(MainActivityViewModel viewModel);
+    void inject(DetailsActivityViewModel viewModel);
     RecipeApi getRecipeApi();
     RecipesDAO getRecipeDAO();
 }

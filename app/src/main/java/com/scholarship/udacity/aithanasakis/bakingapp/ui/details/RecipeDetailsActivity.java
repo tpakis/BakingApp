@@ -1,6 +1,9 @@
 package com.scholarship.udacity.aithanasakis.bakingapp.ui.details;
 
+import android.appwidget.AppWidgetManager;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
@@ -12,6 +15,10 @@ import android.widget.FrameLayout;
 import com.scholarship.udacity.aithanasakis.bakingapp.R;
 import com.scholarship.udacity.aithanasakis.bakingapp.app.Constants;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
+import com.scholarship.udacity.aithanasakis.bakingapp.viewmodel.DetailsActivityViewModel;
+import com.scholarship.udacity.aithanasakis.bakingapp.widget.RecipesWidgetProvider;
+import com.scholarship.udacity.aithanasakis.bakingapp.widget.RecipesWidgetRemoteViewsService;
+
 
 import javax.annotation.Nullable;
 
@@ -19,7 +26,6 @@ import butterknife.BindBool;
 import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.Optional;
 import timber.log.Timber;
 
 /**
@@ -29,6 +35,7 @@ import timber.log.Timber;
 
 public class RecipeDetailsActivity extends AppCompatActivity {
     private Recipe selectedRecipe;
+    private int selectedStepNumber;
     RecipeStepsFragment recipeStepsFragment;
     RecipeStepDetailsFragment recipeStepDetailsFragment;
     //check if device is in portrait or not, have different values in xml
@@ -41,6 +48,8 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     @Nullable
     @BindView(R.id.step_details_fragment_container)
     FrameLayout stepDetailsFragmentContainer;
+    FragmentManager fragmentManager;
+    private DetailsActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,15 +57,19 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         Bundle bundle = getIntent().getExtras();
         setContentView(R.layout.activity_steps);
         ButterKnife.bind(this);
+        viewModel = ViewModelProviders.of(this).get(DetailsActivityViewModel.class);
         if (bundle != null && bundle.containsKey(Constants.SELECTEDRECIPE)) {
             selectedRecipe = bundle.getParcelable(Constants.SELECTEDRECIPE);
-        }else if (savedInstanceState!=null) {
-            selectedRecipe = savedInstanceState.getParcelable(Constants.RECIPEPARCEL);
-        }else{
+            viewModel.setSelectedRecipe(selectedRecipe);
+        }else {
+            selectedRecipe = viewModel.getSelectedRecipe();
+            selectedStepNumber = viewModel.getSelectedStepNumber();
+        }
+        if (selectedRecipe == null){
             Timber.d("no recipe to show error");
             finish();
         }
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        fragmentManager = getSupportFragmentManager();
         //Check if fragment exists to restore it after rotation
         Fragment fragment = fragmentManager.findFragmentByTag(Constants.RECIPESTEPSFRAGMENTTAG);
         if(fragment == null) {
@@ -92,18 +105,29 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         int id = item.getItemId();
             switch (id) {
                 case R.id.add_to_widget:
+                    viewModel.addToWidget();
+                    Snackbar.make(stepsFragmentContainer,getString(R.string.added_to_widget),Snackbar.LENGTH_LONG).show();
+                    RecipesWidgetRemoteViewsService.updateWidget(this,selectedRecipe);
                     break;
             }
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelable(Constants.RECIPEPARCEL,selectedRecipe);
-    }
+
     public Recipe getSelectedRecipe() {
         return selectedRecipe;
     }
 
+    public int getSelectedStepNumber() {
+        return selectedStepNumber;
+    }
 
+    public void setSelectedStepNumber(int selectedStepNumber) {
+        this.selectedStepNumber = selectedStepNumber;
+        viewModel.setSelectedStepNumber(selectedStepNumber);
+        if (stepDetailsFragmentContainer==null&&!getResources().getBoolean(R.bool.portrait)){
+            fragmentManager.beginTransaction()
+                    .replace(R.id.steps_fragment_container, recipeStepDetailsFragment,Constants.STEPDETAILSFRAGMENTTAG)
+                    .commit();
+        }
+    }
 }

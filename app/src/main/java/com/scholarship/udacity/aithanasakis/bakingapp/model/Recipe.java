@@ -120,6 +120,7 @@ public class Recipe implements Parcelable {
         dest.writeList(this.steps);
         dest.writeValue(this.servings);
         dest.writeString(this.image);
+        dest.writeValue(this.forWidget);
     }
 
     public Recipe() {
@@ -134,6 +135,7 @@ public class Recipe implements Parcelable {
         in.readList(this.steps, Step.class.getClassLoader());
         this.servings = (Integer) in.readValue(Integer.class.getClassLoader());
         this.image = in.readString();
+        this.forWidget = (Integer) in.readValue(Integer.class.getClassLoader());
     }
 
     public static final Parcelable.Creator<Recipe> CREATOR = new Parcelable.Creator<Recipe>() {

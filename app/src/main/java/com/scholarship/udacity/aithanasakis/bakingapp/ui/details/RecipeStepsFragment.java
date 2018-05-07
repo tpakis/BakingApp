@@ -65,6 +65,7 @@ public class RecipeStepsFragment extends Fragment implements RecipeStepsAdapter.
 // recycler adapter on click
     @Override
     public void onClick(Step selectedStepItem) {
+        parent.setSelectedStepNumber(selectedStepItem.getId());
         Timber.d(selectedStepItem.getDescription());
     }
 
