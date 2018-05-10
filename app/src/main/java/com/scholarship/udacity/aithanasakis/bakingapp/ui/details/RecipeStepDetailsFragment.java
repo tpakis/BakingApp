@@ -136,7 +136,7 @@ public class RecipeStepDetailsFragment extends Fragment {
         if ((selectedStep.getThumbnailURL()!=null) && !selectedStep.getThumbnailURL().equals("")) {
             thumbnail.setVisibility(View.VISIBLE);
             RequestOptions options = new RequestOptions()
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
+                    .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
                     .centerCrop()
                     .dontTransform()
                     .placeholder(R.mipmap.ic_launcher_round)
