@@ -26,6 +26,7 @@ public class MainActivityViewModel extends ViewModel {
     RecipesRepository mRepository;
     //mediator lists because they transfer the changes of the livedata lists of the repository
     private MediatorLiveData<Resource<List<Recipe>>> recipesListObservable = new MediatorLiveData<Resource<List<Recipe>>>();
+
     @Inject
     public MainActivityViewModel() {
         super();
@@ -38,7 +39,6 @@ public class MainActivityViewModel extends ViewModel {
                 recipesListObservable.setValue(recipes);
             }
         });
-
     }
 
     public void getData(){

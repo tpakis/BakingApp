@@ -32,6 +32,7 @@ public class RecipesMainAdapter extends RecyclerView.Adapter<RecipesMainAdapter.
         mClickHandler = handler;
         this.context=context;
     }
+
     public interface RecipesMainAdapterOnClickHandler {
         void onClick(Recipe selectedRecipeItem);
     }

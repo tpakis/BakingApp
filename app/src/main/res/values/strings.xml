@@ -10,4 +10,7 @@
     <string name="ingredients_label">Ingredients</string>
     <string name="add_to_widget">Add to widget</string>
     <string name="added_to_widget">Added to widget</string>
+    <!--Fragment Step Details-->
+    <string name="instructions">Instructions</string>
+    <string name="step_number">Step: </string>
 </resources>

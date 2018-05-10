@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
         pullToRefresh.setOnRefreshListener(this);
         recyclerViewRecipesList.addItemDecoration(dividerItemDecoration);
         viewModel = ViewModelProviders.of(this).get(MainActivityViewModel.class);
+        pullToRefresh.setRefreshing(true);
         viewModel.getRecipesListObservable().observe(MainActivity.this, new Observer<Resource<List<Recipe>>>() {
             @Override
             public void onChanged(@Nullable Resource<List<Recipe>> recipes) {
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
     @Override
     protected void onResume() {
         super.onResume();
-        pullToRefresh.setRefreshing(true);
+
         viewModel.getData();
     }
 

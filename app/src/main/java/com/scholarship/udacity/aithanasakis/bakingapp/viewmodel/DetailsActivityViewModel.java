@@ -1,6 +1,8 @@
 package com.scholarship.udacity.aithanasakis.bakingapp.viewmodel;
 
 
+import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.ViewModel;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.app.BakingApplication;
@@ -15,7 +17,10 @@ import javax.inject.Inject;
 
 public class DetailsActivityViewModel extends ViewModel {
     private Recipe selectedRecipe;
-    private int selectedStepNumber =0;
+    private long playerPosition =0;
+    private boolean playWhenReady = true;
+    private boolean fragmentStepDetailsVisible = false;
+    private MediatorLiveData<Integer> selectedStepObservable = new MediatorLiveData<Integer>();
     @Inject
     RecipesRepository mRepository;
 
@@ -33,12 +38,12 @@ public class DetailsActivityViewModel extends ViewModel {
         this.selectedRecipe = selectedRecipe;
     }
 
-    public int getSelectedStepNumber() {
-        return selectedStepNumber;
+    public LiveData<Integer> getSelectedStepNumber() {
+        return selectedStepObservable;
     }
 
     public void setSelectedStepNumber(int selectedStepNumber) {
-        this.selectedStepNumber = selectedStepNumber;
+        selectedStepObservable.setValue(selectedStepNumber);
     }
 
     //sets the selected recipe for new widget recipe
@@ -47,4 +52,28 @@ public class DetailsActivityViewModel extends ViewModel {
         mRepository.setRecipeForWidget(selectedRecipe);
     }
 
+    public long getPlayerPosition() {
+        return playerPosition;
+    }
+
+    public void setPlayerPosition(long playerPosition) {
+        this.playerPosition = playerPosition;
+    }
+
+    public boolean getPlayWhenReady() {
+        return playWhenReady;
+    }
+
+    public void setPlayWhenReady(boolean playWhenReady) {
+        this.playWhenReady = playWhenReady;
+    }
+
+
+    public boolean isFragmentStepDetailsVisible() {
+        return fragmentStepDetailsVisible;
+    }
+
+    public void setFragmentStepDetailsVisible(boolean fragmentStepDetailsVisible) {
+        this.fragmentStepDetailsVisible = fragmentStepDetailsVisible;
+    }
 }

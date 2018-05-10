@@ -35,7 +35,6 @@ import timber.log.Timber;
 
 public class RecipeDetailsActivity extends AppCompatActivity {
     private Recipe selectedRecipe;
-    private int selectedStepNumber;
     RecipeStepsFragment recipeStepsFragment;
     RecipeStepDetailsFragment recipeStepDetailsFragment;
     //check if device is in portrait or not, have different values in xml
@@ -49,6 +48,7 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     @BindView(R.id.step_details_fragment_container)
     FrameLayout stepDetailsFragmentContainer;
     FragmentManager fragmentManager;
+
     private DetailsActivityViewModel viewModel;
 
     @Override
@@ -63,7 +63,6 @@ public class RecipeDetailsActivity extends AppCompatActivity {
             viewModel.setSelectedRecipe(selectedRecipe);
         }else {
             selectedRecipe = viewModel.getSelectedRecipe();
-            selectedStepNumber = viewModel.getSelectedStepNumber();
         }
         if (selectedRecipe == null){
             Timber.d("no recipe to show error");
@@ -91,13 +90,25 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         }else{
             recipeStepDetailsFragment = (RecipeStepDetailsFragment)fragment2;
         }
+        showCorrectFragments();
         
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.details_menu, menu);
         return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (stepDetailsFragmentContainer == null && recipeStepDetailsFragment.isVisible()){
+            viewModel.setFragmentStepDetailsVisible(false);
+            fragmentManager.beginTransaction()
+                    .replace(R.id.steps_fragment_container, recipeStepsFragment, Constants.RECIPESTEPSFRAGMENTTAG)
+                    .commit();
+            return;
+        }
+        super.onBackPressed();
     }
 
     @Override
@@ -109,6 +120,10 @@ public class RecipeDetailsActivity extends AppCompatActivity {
                     Snackbar.make(stepsFragmentContainer,getString(R.string.added_to_widget),Snackbar.LENGTH_LONG).show();
                     RecipesWidgetRemoteViewsService.updateWidget(this,selectedRecipe);
                     break;
+                    //home button acts as back button
+                case android.R.id.home:
+                    onBackPressed();
+                    return true;
             }
         return super.onOptionsItemSelected(item);
     }
@@ -117,17 +132,31 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         return selectedRecipe;
     }
 
-    public int getSelectedStepNumber() {
-        return selectedStepNumber;
+    private void showCorrectFragments(){
+        if (stepDetailsFragmentContainer!=null){
+            fragmentManager.beginTransaction()
+                    .add(R.id.steps_fragment_container, recipeStepsFragment,Constants.RECIPESTEPSFRAGMENTTAG)
+                    .commit();
+            fragmentManager.beginTransaction()
+                    .add(R.id.step_details_fragment_container, recipeStepDetailsFragment,Constants.STEPDETAILSFRAGMENTTAG)
+                    .commit();
+        }else{
+            if (viewModel.isFragmentStepDetailsVisible()){
+                fragmentManager.beginTransaction()
+                        .replace(R.id.steps_fragment_container, recipeStepDetailsFragment, Constants.STEPDETAILSFRAGMENTTAG)
+                        .commit();
+            }
+        }
     }
 
     public void setSelectedStepNumber(int selectedStepNumber) {
-        this.selectedStepNumber = selectedStepNumber;
-        viewModel.setSelectedStepNumber(selectedStepNumber);
-        if (stepDetailsFragmentContainer==null&&!getResources().getBoolean(R.bool.portrait)){
-            fragmentManager.beginTransaction()
-                    .replace(R.id.steps_fragment_container, recipeStepDetailsFragment,Constants.STEPDETAILSFRAGMENTTAG)
-                    .commit();
+        if ((selectedStepNumber < selectedRecipe.getSteps().size()) && selectedStepNumber>=0){
+            viewModel.setSelectedStepNumber(selectedStepNumber);
+            if (stepDetailsFragmentContainer == null) {
+                fragmentManager.beginTransaction()
+                        .replace(R.id.steps_fragment_container, recipeStepDetailsFragment, Constants.STEPDETAILSFRAGMENTTAG)
+                        .commit();
+            }
         }
     }
 }
