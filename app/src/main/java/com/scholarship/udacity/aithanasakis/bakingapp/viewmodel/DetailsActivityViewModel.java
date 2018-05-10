@@ -16,13 +16,13 @@ import javax.inject.Inject;
  */
 
 public class DetailsActivityViewModel extends ViewModel {
+    @Inject
+    RecipesRepository mRepository;
     private Recipe selectedRecipe;
     private long playerPosition =0;
     private boolean playWhenReady = true;
     private boolean fragmentStepDetailsVisible = false;
     private MediatorLiveData<Integer> selectedStepObservable = new MediatorLiveData<Integer>();
-    @Inject
-    RecipesRepository mRepository;
 
     @Inject
     public DetailsActivityViewModel() {
@@ -43,9 +43,13 @@ public class DetailsActivityViewModel extends ViewModel {
     }
 
     public void setSelectedStepNumber(int selectedStepNumber) {
+        resetPlayerState();
         selectedStepObservable.setValue(selectedStepNumber);
     }
-
+    public void resetPlayerState(){
+        playerPosition =0;
+        playWhenReady = true;
+    }
     //sets the selected recipe for new widget recipe
     public void addToWidget(){
         selectedRecipe.setForWidget(1);

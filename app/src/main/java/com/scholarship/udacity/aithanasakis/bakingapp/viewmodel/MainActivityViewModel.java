@@ -4,7 +4,6 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MediatorLiveData;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModel;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.app.BakingApplication;

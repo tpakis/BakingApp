@@ -32,6 +32,8 @@ import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity implements RecipesMainAdapter.RecipesMainAdapterOnClickHandler, SwipeRefreshLayout.OnRefreshListener {
 
+    @BindInt(R.integer.grid_columns)
+    public int columnsCount;
     @BindView(R.id.recycler_view_recipes_list)
     RecyclerView recyclerViewRecipesList;
     @BindView(R.id.todo_list_empty_view)
@@ -41,8 +43,6 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
     private MainActivityViewModel viewModel;
     private GridLayoutManager mGridLayoutManager;
     private RecipesMainAdapter mRecipesMainAdapter;
-    @BindInt(R.integer.grid_columns)
-    public int columnsCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,10 +66,10 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
             @Override
             public void onChanged(@Nullable Resource<List<Recipe>> recipes) {
                 Timber.d("ttttttttttt" + recipes.status.toString());
-                if (recipes.status!= Status.LOADING){
+                if (recipes.status != Status.LOADING) {
                     pullToRefresh.setRefreshing(false);
                 }
-                if (recipes.data != null&&!compareLists(mRecipesMainAdapter.getRecipesListShown(),recipes.data)) {
+                if (recipes.data != null && !compareLists(mRecipesMainAdapter.getRecipesListShown(), recipes.data)) {
                     mRecipesMainAdapter.setRecipesListToShow(recipes.data);
                     todoListEmptyView.setVisibility(View.GONE);
                 }
@@ -78,18 +78,18 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
 
 
     }
-    public boolean compareLists(List<Recipe> baseList,List<Recipe> newList){
-        boolean areSame=true;
-        if (baseList==null){
-            areSame=false;
-        }else {
+
+    public boolean compareLists(List<Recipe> baseList, List<Recipe> newList) {
+        boolean areSame = true;
+        if (baseList == null) {
+            areSame = false;
+        } else {
             for (Recipe item : newList) {
                 if (!baseList.contains(item)) {
                     areSame = false;
                 }
             }
         }
-        Timber.d("tttttttttt"+String.valueOf(areSame));
         return areSame;
     }
 
@@ -106,8 +106,6 @@ public class MainActivity extends AppCompatActivity implements RecipesMainAdapte
         // Fetching data from server
         viewModel.getData();
     }
-
-
 
     @Override
     public void onClick(Recipe selectedRecipeItem) {

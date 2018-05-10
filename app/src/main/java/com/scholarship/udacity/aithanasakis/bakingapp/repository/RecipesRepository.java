@@ -1,11 +1,8 @@
 package com.scholarship.udacity.aithanasakis.bakingapp.repository;
 
-import android.annotation.SuppressLint;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Switch;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Resource;
@@ -13,11 +10,7 @@ import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Status;
 import com.scholarship.udacity.aithanasakis.bakingapp.network.RecipeApi;
 import com.scholarship.udacity.aithanasakis.bakingapp.room.RecipesDAO;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
-import javax.annotation.Nonnull;
 import javax.inject.Inject;
 
 import retrofit2.Call;

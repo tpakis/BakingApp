@@ -73,25 +73,17 @@ public class RecipeDetailsActivity extends AppCompatActivity {
         Fragment fragment = fragmentManager.findFragmentByTag(Constants.RECIPESTEPSFRAGMENTTAG);
         if(fragment == null) {
             recipeStepsFragment = new RecipeStepsFragment();
-            fragmentManager.beginTransaction()
-                    .add(R.id.steps_fragment_container, recipeStepsFragment,Constants.RECIPESTEPSFRAGMENTTAG)
-                    .commit();
         }else{
             recipeStepsFragment = (RecipeStepsFragment)fragment;
         }
         Fragment fragment2 = fragmentManager.findFragmentByTag(Constants.STEPDETAILSFRAGMENTTAG);
         if(fragment2 == null) {
             recipeStepDetailsFragment = new RecipeStepDetailsFragment();
-            if (stepDetailsFragmentContainer!=null){
-                fragmentManager.beginTransaction()
-                        .add(R.id.step_details_fragment_container, recipeStepDetailsFragment,Constants.STEPDETAILSFRAGMENTTAG)
-                        .commit();
-            }
         }else{
             recipeStepDetailsFragment = (RecipeStepDetailsFragment)fragment2;
         }
         showCorrectFragments();
-        
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -114,17 +106,17 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-            switch (id) {
-                case R.id.add_to_widget:
-                    viewModel.addToWidget();
-                    Snackbar.make(stepsFragmentContainer,getString(R.string.added_to_widget),Snackbar.LENGTH_LONG).show();
-                    RecipesWidgetRemoteViewsService.updateWidget(this,selectedRecipe);
-                    break;
-                    //home button acts as back button
-                case android.R.id.home:
-                    onBackPressed();
-                    return true;
-            }
+        switch (id) {
+            case R.id.add_to_widget:
+                viewModel.addToWidget();
+                Snackbar.make(stepsFragmentContainer,getString(R.string.added_to_widget),Snackbar.LENGTH_LONG).show();
+                RecipesWidgetRemoteViewsService.updateWidget(this,selectedRecipe);
+                break;
+            //home button acts as back button
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -135,15 +127,19 @@ public class RecipeDetailsActivity extends AppCompatActivity {
     private void showCorrectFragments(){
         if (stepDetailsFragmentContainer!=null){
             fragmentManager.beginTransaction()
-                    .add(R.id.steps_fragment_container, recipeStepsFragment,Constants.RECIPESTEPSFRAGMENTTAG)
+                    .replace(R.id.steps_fragment_container, recipeStepsFragment,Constants.RECIPESTEPSFRAGMENTTAG)
                     .commit();
             fragmentManager.beginTransaction()
-                    .add(R.id.step_details_fragment_container, recipeStepDetailsFragment,Constants.STEPDETAILSFRAGMENTTAG)
+                    .replace(R.id.step_details_fragment_container, recipeStepDetailsFragment,Constants.STEPDETAILSFRAGMENTTAG)
                     .commit();
         }else{
             if (viewModel.isFragmentStepDetailsVisible()){
                 fragmentManager.beginTransaction()
                         .replace(R.id.steps_fragment_container, recipeStepDetailsFragment, Constants.STEPDETAILSFRAGMENTTAG)
+                        .commit();
+            }else{
+                fragmentManager.beginTransaction()
+                        .replace(R.id.steps_fragment_container, recipeStepsFragment,Constants.RECIPESTEPSFRAGMENTTAG)
                         .commit();
             }
         }

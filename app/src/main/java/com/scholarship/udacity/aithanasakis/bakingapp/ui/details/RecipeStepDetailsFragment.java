@@ -33,19 +33,14 @@ import com.google.android.exoplayer2.util.Util;
 import com.scholarship.udacity.aithanasakis.bakingapp.R;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Step;
-import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Resource;
-import com.scholarship.udacity.aithanasakis.bakingapp.model.basic.Status;
-import com.scholarship.udacity.aithanasakis.bakingapp.ui.main.MainActivity;
-import com.scholarship.udacity.aithanasakis.bakingapp.viewmodel.DetailsActivityViewModel;
 
-import java.util.List;
+import com.scholarship.udacity.aithanasakis.bakingapp.viewmodel.DetailsActivityViewModel;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.Optional;
 import butterknife.Unbinder;
-import timber.log.Timber;
+
 
 /**
  * Created by 3piCerberus on 03/05/2018.
@@ -115,10 +110,10 @@ public class RecipeStepDetailsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (exoPlayer!=null && exoPlayer.getPlaybackState() != Player.STATE_ENDED) {
+        if (exoPlayer != null && exoPlayer.getPlaybackState() != Player.STATE_ENDED) {
             viewModel.setPlayerPosition(exoPlayer.getCurrentPosition());
             viewModel.setPlayWhenReady(exoPlayer.getPlayWhenReady());
-        }else{
+        } else {
             viewModel.setPlayerPosition(0L);
             viewModel.setPlayWhenReady(true);
         }
@@ -126,14 +121,14 @@ public class RecipeStepDetailsFragment extends Fragment {
         unbinder.unbind();
     }
 
-    private void setupUI(boolean newVideoSource){
+    private void setupUI(boolean newVideoSource) {
         Step selectedStep = selectedRecipe.getSteps().get(selectedStepNumber);
         if (selectedStep.getVideoURL() != null && !selectedStep.getVideoURL().equals("")) {
-            initExoPlayer(Uri.parse(selectedStep.getVideoURL()),newVideoSource);
-        }else{
+            initExoPlayer(Uri.parse(selectedStep.getVideoURL()), newVideoSource);
+        } else {
             exoPlayerView.setVisibility(View.GONE);
         }
-        if ((selectedStep.getThumbnailURL()!=null) && !selectedStep.getThumbnailURL().equals("")) {
+        if ((selectedStep.getThumbnailURL() != null) && !selectedStep.getThumbnailURL().equals("")) {
             thumbnail.setVisibility(View.VISIBLE);
             RequestOptions options = new RequestOptions()
                     .diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
@@ -144,11 +139,12 @@ public class RecipeStepDetailsFragment extends Fragment {
             Glide.with(parent).load(selectedStep.getThumbnailURL()).apply(options)
                     .into(thumbnail);
         } else {
-           thumbnail.setVisibility(View.GONE);
+            thumbnail.setVisibility(View.GONE);
         }
         descriptionTextView.setText(selectedStep.getDescription());
         stepNumberTextView.setText(getString(R.string.step_number) + String.valueOf(selectedStepNumber + 1));
     }
+
     private void initExoPlayer(Uri video, boolean newVideoSource) {
         // Create a default TrackSelector
         DefaultBandwidthMeter bandwidthMeter = new DefaultBandwidthMeter();
@@ -162,7 +158,7 @@ public class RecipeStepDetailsFragment extends Fragment {
             exoPlayer = ExoPlayerFactory.newSimpleInstance(getContext(), trackSelector);
             // Bind the player to the view.
             exoPlayerView.setPlayer(exoPlayer);
-        }else{
+        } else {
             exoPlayer.stop();
             if (newVideoSource) {
                 exoPlayer.seekTo(0L);
@@ -191,10 +187,10 @@ public class RecipeStepDetailsFragment extends Fragment {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.btn_prev:
-                parent.setSelectedStepNumber(selectedStepNumber-1);
+                parent.setSelectedStepNumber(selectedStepNumber - 1);
                 break;
             case R.id.btn_next:
-                parent.setSelectedStepNumber(selectedStepNumber+1);
+                parent.setSelectedStepNumber(selectedStepNumber + 1);
                 break;
         }
     }

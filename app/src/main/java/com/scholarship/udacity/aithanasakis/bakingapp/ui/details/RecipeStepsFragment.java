@@ -3,7 +3,6 @@ package com.scholarship.udacity.aithanasakis.bakingapp.ui.details;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,11 +12,9 @@ import android.widget.TextView;
 
 import com.scholarship.udacity.aithanasakis.bakingapp.R;
 import com.scholarship.udacity.aithanasakis.bakingapp.adapter.RecipeStepsAdapter;
-import com.scholarship.udacity.aithanasakis.bakingapp.adapter.RecipesMainAdapter;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Ingredient;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Step;
-import com.scholarship.udacity.aithanasakis.bakingapp.ui.main.MainActivity;
 
 import java.util.Locale;
 
@@ -55,28 +52,30 @@ public class RecipeStepsFragment extends Fragment implements RecipeStepsAdapter.
         selectedRecipe = parent.getSelectedRecipe();
         setupIngredients();
         //setup recyclerview
-        mLinearLayoutManager = new LinearLayoutManager(parent,LinearLayoutManager.VERTICAL,false);
+        mLinearLayoutManager = new LinearLayoutManager(parent, LinearLayoutManager.VERTICAL, false);
         recyclerViewRecipeStepsList.setLayoutManager(mLinearLayoutManager);
         mRecipeStepsAdapter = new RecipeStepsAdapter(this);
         recyclerViewRecipeStepsList.setAdapter(mRecipeStepsAdapter);
         mRecipeStepsAdapter.setStepsListToShow(selectedRecipe.getSteps());
         return viewgroup;
     }
-// recycler adapter on click
+
+    // recycler adapter on click
     @Override
     public void onClick(Step selectedStepItem) {
         parent.setSelectedStepNumber(selectedStepItem.getId());
         Timber.d(selectedStepItem.getDescription());
     }
 
-    private void setupIngredients(){
+    private void setupIngredients() {
         StringBuilder ingredientsSb = new StringBuilder();
-        for (Ingredient ingredient:selectedRecipe.getIngredients()) {
+        for (Ingredient ingredient : selectedRecipe.getIngredients()) {
             ingredientsSb.append(String.format(Locale.getDefault(), "• %s (%d %s)", ingredient.getIngredient(), ingredient.getQuantity().intValue(), ingredient.getMeasure()));
             ingredientsSb.append("\n");
         }
         ingredientsText.setText(ingredientsSb.toString());
     }
+
     @Override
     public void onDestroyView() {
         super.onDestroyView();

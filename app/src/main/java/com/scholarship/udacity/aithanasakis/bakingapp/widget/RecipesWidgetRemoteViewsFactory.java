@@ -11,12 +11,10 @@ import com.scholarship.udacity.aithanasakis.bakingapp.R;
 import com.scholarship.udacity.aithanasakis.bakingapp.app.BakingApplication;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Ingredient;
 import com.scholarship.udacity.aithanasakis.bakingapp.model.Recipe;
-import com.scholarship.udacity.aithanasakis.bakingapp.repository.RecipesRepository;
 import com.scholarship.udacity.aithanasakis.bakingapp.room.RecipesDAO;
 
 import java.util.List;
 
-import javax.inject.Inject;
 
 /**
  * Created by 3piCerberus on 04/05/2018.
@@ -84,15 +82,10 @@ public class RecipesWidgetRemoteViewsFactory implements RemoteViewsService.Remot
         RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_recipes_list_item);
         rv.setTextViewText(R.id.widget_item_ingredient_name_label, ingredients.get(position).getIngredient());
 
-        /*Intent fillInIntent = new Intent();
-        fillInIntent.putExtra(CollectionAppWidgetProvider.EXTRA_LABEL, mCursor.getString(1));
-        rv.setOnClickFillInIntent(R.id.widgetItemContainer, fillInIntent);*/
-
         return rv;
     }
     @Override
     public long getItemId(int position) {
-//        return mCursor.moveToPosition(position) ? mCursor.getLong(0) : position;
         return position;
     }
 
