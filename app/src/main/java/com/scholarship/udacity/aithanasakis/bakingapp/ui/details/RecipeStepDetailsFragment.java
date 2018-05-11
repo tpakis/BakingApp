@@ -110,6 +110,12 @@ public class RecipeStepDetailsFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+        unbinder.unbind();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
         if (exoPlayer != null && exoPlayer.getPlaybackState() != Player.STATE_ENDED) {
             viewModel.setPlayerPosition(exoPlayer.getCurrentPosition());
             viewModel.setPlayWhenReady(exoPlayer.getPlayWhenReady());
@@ -118,7 +124,6 @@ public class RecipeStepDetailsFragment extends Fragment {
             viewModel.setPlayWhenReady(true);
         }
         releaseExoPlayer();
-        unbinder.unbind();
     }
 
     private void setupUI(boolean newVideoSource) {
